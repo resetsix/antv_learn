@@ -4,10 +4,10 @@ name: ci
 on:
   push:
     branches:
-      - main # 设置 push 触发 CI/CD 的分支。请修改
+      - master # 设置 push 触发 CI/CD 的分支。请修改
   pull_request:
     branches:
-      - main # 设置 pull_request 触发 CI/CD 的分支。请修改
+      - master # 设置 pull_request 触发 CI/CD 的分支。请修改
 jobs:
   install-test-build-deploy:
     runs-on: ubuntu-latest
