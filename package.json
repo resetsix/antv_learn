@@ -6,6 +6,10 @@
 	"dependencies": {
 		"@antv/layout": "^0.3.25",
 		"@antv/x6": "^2.16.1",
+		"@antv/x6-plugin-dnd": "^2.1.1",
+		"@antv/x6-plugin-snapline": "^2.1.7",
+		"@antv/x6-plugin-stencil": "^2.1.4",
+		"@emotion/react": "^11.11.1",
 		"@testing-library/jest-dom": "^5.17.0",
 		"@testing-library/react": "^13.4.0",
 		"@testing-library/user-event": "^13.5.0",

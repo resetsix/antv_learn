@@ -7,23 +7,50 @@ const data = {
 		{
 			id: "node1",
 			label: "Node 1",
+			shape: "custom-node-width-port",
 			width: 80,
 			height: 30,
 			x: 200,
 			y: 100,
+			ports: {
+				items: [
+					{
+						id: "port_1",
+						group: "bottom",
+					},
+					{
+						id: "port_2",
+						group: "bottom",
+					},
+				],
+			},
 		},
 		{
 			id: "node2",
 			label: "Node 2",
+			shape: "custom-node-width-port",
 			width: 80,
 			height: 30,
 			x: 100,
 			y: 200,
+			ports: {
+				items: [
+					{
+						id: "port_3",
+						group: "top",
+					},
+					{
+						id: "port_4",
+						group: "top",
+					},
+				],
+			},
 		},
 		{
 			id: "node3",
 			label: "Node 3",
 			width: 80,
+			shape: "custom-node-width-port",
 			height: 30,
 			x: 300,
 			y: 200,
@@ -41,6 +68,48 @@ const data = {
 	],
 };
 
+Graph.registerNode(
+	"custom-node-width-port",
+	{
+		inherit: "rect",
+		width: 100,
+		height: 40,
+		attrs: {
+			body: {
+				stroke: "#8f8f8f",
+				strokeWidth: 1,
+				fill: "#fff",
+				rx: 6,
+				ry: 6,
+			},
+		},
+		ports: {
+			groups: {
+				top: {
+					position: "top",
+					attrs: {
+						circle: {
+							magnet: true,
+							stroke: "#8f8f8f",
+							r: 5,
+						},
+					},
+				},
+				bottom: {
+					position: "bottom",
+					attrs: {
+						circle: {
+							magnet: true,
+							stroke: "#8f8f8f",
+							r: 5,
+						},
+					},
+				},
+			},
+		},
+	},
+	true
+);
 export const Graphs = () => {
 	const ref = useRef<Graph | null>(null);
 	const [size, setSize] = useState<number>(30);
@@ -66,7 +135,9 @@ export const Graphs = () => {
 				minScale: 0.2,
 			},
 		});
-		graph.resize(800, 600);
+		// 改变节点大小
+		// graph.resize(800, 600);
+
 		graph.fromJSON(data);
 		graph.centerContent();
 		ref.current = graph;
