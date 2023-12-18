@@ -1,0 +1,61 @@
+name: ci
+
+# 触发条件：需要保证与仓库主分支名称一致！
+on:
+  push:
+    branches:
+      - main # 设置 push 触发 CI/CD 的分支。请修改
+  pull_request:
+    branches:
+      - main # 设置 pull_request 触发 CI/CD 的分支。请修改
+jobs:
+  install-test-build-deploy:
+    runs-on: ubuntu-latest
+    name: CI/CD
+
+    steps:
+      # 检出主分支
+      - name: checkout master branch
+        uses: actions/checkout@v2
+
+      # 设置 Node.js 环境
+      - name: set node environment
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x # 指定 Node.js 版本。请修改
+
+      # 缓存依赖项
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: install node modules
+        run: npm ci # 安装项目依赖
+
+      - name: build package
+        run: npm run build # 构建项目
+
+      # 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        # 使用 actions
+        uses: JamesIves/github-pages-deploy-action@4.1.4
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          branch: gh-pages
+          folder: build
+          clean: true
+
+      # 部署到服务器
+      # - name: deploy to the server
+      #   uses: garygrossgarten/github-action-scp@release
+      #   with:
+      #     local: dist
+      #     remote: /opt/application/todo
+      #     host: ${{ secrets.SSH_HOST }}
+      #     username: ${{ secrets.SSH_USER }}
+      #     password: ${{ secrets.PASSWORD }}
+      #     concurrency: 20
