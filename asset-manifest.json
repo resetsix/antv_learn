@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/antv_learn/static/css/main.1d9e2545.css",
-    "main.js": "/antv_learn/static/js/main.f06721f6.js",
+    "main.js": "/antv_learn/static/js/main.c4e5a696.js",
     "static/js/787.62f3e229.chunk.js": "/antv_learn/static/js/787.62f3e229.chunk.js",
     "index.html": "/antv_learn/index.html",
     "main.1d9e2545.css.map": "/antv_learn/static/css/main.1d9e2545.css.map",
-    "main.f06721f6.js.map": "/antv_learn/static/js/main.f06721f6.js.map",
+    "main.c4e5a696.js.map": "/antv_learn/static/js/main.c4e5a696.js.map",
     "787.62f3e229.chunk.js.map": "/antv_learn/static/js/787.62f3e229.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1d9e2545.css",
-    "static/js/main.f06721f6.js"
+    "static/js/main.c4e5a696.js"
   ]
 }
