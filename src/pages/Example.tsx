@@ -5,7 +5,7 @@ import { useMount } from "ahooks";
 import { useRef } from "react";
 import { DATA } from "./data";
 
-const commonAttrs = {
+export const commonAttrs = {
 	body: {
 		stroke: "#8f8f8f",
 		strokeWidth: 1,
@@ -20,8 +20,17 @@ const commonAttrs = {
 		y: 12,
 	},
 	line: {
-		stroke: "#8f8f8f",
+		stroke: "#d5d5d5",
 		strokeWidth: 1,
+		targetMarker: {
+			name: "block", // 箭头类型
+			args: {
+				size: 5, // 箭头的尺寸，这也会影响箭头宽度
+				attrs: {
+					fill: "#d9d9d9", // 箭头的颜色
+				},
+			},
+		},
 	},
 };
 Graph.registerNode(
@@ -86,43 +95,6 @@ export const Example = () => {
 			},
 		});
 
-		// 配置对齐线
-		graph.use(
-			new Snapline({
-				enabled: true, // 启用插件
-				sharp: true, // 设置插件的属性
-			})
-		);
-
-		// 为画布中的新增节点添加连接桩
-		graph.on("node:added", ({ node, options }) => {
-			//节点添加后根据需求添加连接桩
-			if (options.stencil) {
-				node.addPorts([
-					{
-						id: "stencil_port_1",
-						group: "top",
-					},
-					{
-						id: "stencil_port_2",
-						group: "bottom",
-					},
-				]);
-			}
-		});
-
-		// 为画布中的新增边添加样式
-		graph.on("edge:added", ({ edge, options }) => {
-			edge.attr({
-				line: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-				},
-			});
-		});
-
-		graph.fromJSON(DATA);
-
 		// 配置拖拽栏目
 		const stencil = new Stencil({
 			title: "大数据组件导航",
@@ -145,6 +117,18 @@ export const Example = () => {
 			],
 		});
 
+		// 加载数据
+		graph.fromJSON(DATA);
+
+		/* 使用插件 */
+		// 配置对齐线
+		graph.use(
+			new Snapline({
+				enabled: true, // 启用插件
+				sharp: true, // 设置插件的属性
+			})
+		);
+
 		// 将Stencil的容器添加到页面中
 		stencilContainer.current?.append(stencil.container);
 
@@ -153,7 +137,6 @@ export const Example = () => {
 
 		// 包含所有节点标签的数组
 		const stencilLabelData = ["K8S", "SQL", "SPARK", "FLINK"];
-
 		// 创建不同形状的节点
 		const stencilNodesData = stencilLabelData.map((label) =>
 			graph.createNode({
@@ -163,13 +146,36 @@ export const Example = () => {
 				rx: 1,
 				ry: 1,
 				label: label,
-				// attrs: commonAttrs,
 				attrs: commonAttrs,
 			})
 		);
-
 		// 将节点加载到Stencil中的分组中
 		stencil.load(stencilNodesData, "group1");
+
+		/* 事件 */
+		// 为画布中的新增节点添加连接桩
+		graph.on("node:added", ({ node, options }) => {
+			//节点添加后根据需求添加连接桩
+			if (options.stencil) {
+				node.addPorts([
+					{
+						id: "stencil_port_1",
+						group: "top",
+					},
+					{
+						id: "stencil_port_2",
+						group: "bottom",
+					},
+				]);
+			}
+		});
+
+		// 为画布中的新增边添加样式
+		graph.on("edge:added", ({ edge, options }) => {
+			edge.attr({
+				line: commonAttrs.line,
+			});
+		});
 	});
 
 	return (

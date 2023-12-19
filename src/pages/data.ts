@@ -47,9 +47,18 @@ export const DATA = {
             // 边的样式
             attrs: {
                 line: {
-                    stroke: "#8f8f8f",
+                    stroke: "#d5d5d5",
                     strokeWidth: 1,
-                },
+                    targetMarker: {
+                        name: "block", // 箭头类型
+                        args: {
+                            size: 5, // 箭头的尺寸，这也会影响箭头宽度
+                            attrs: {
+                                fill: "#d9d9d9", // 箭头的颜色
+                            },
+                        },
+                    },
+                }
             },
             router: {
                 name: "manhattan",
@@ -59,13 +68,15 @@ export const DATA = {
                 },
             },
             connector: {
-                name: "jumpover",
+                name: "rounded",
                 args: {
                     type: "arc",
                     size: 5,
                     radius: 0,
                 },
             },
+            // router: 'orth',
+            // connector: 'rounded',
         },
     ],
 };
