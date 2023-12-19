@@ -1,38 +1,11 @@
-import { Graph } from "@antv/x6";
+import { Graph, Node, Shape } from "@antv/x6";
 import { Snapline } from "@antv/x6-plugin-snapline";
 import { Stencil } from "@antv/x6-plugin-stencil";
 import { useMount } from "ahooks";
 import { useRef } from "react";
 import { DATA } from "./data";
+import { commonAttrs } from "./commonAttrs";
 
-export const commonAttrs = {
-	body: {
-		stroke: "#8f8f8f",
-		strokeWidth: 1,
-		fill: "#fff",
-	},
-	img: {
-		"xlink:href":
-			"https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png",
-		width: 16,
-		height: 16,
-		x: 12,
-		y: 12,
-	},
-	line: {
-		stroke: "#d5d5d5",
-		strokeWidth: 1,
-		targetMarker: {
-			name: "block", // 箭头类型
-			args: {
-				size: 5, // 箭头的尺寸，这也会影响箭头宽度
-				attrs: {
-					fill: "#d9d9d9", // 箭头的颜色
-				},
-			},
-		},
-	},
-};
 Graph.registerNode(
 	"custom-node-width-port",
 	{
@@ -89,9 +62,62 @@ export const Example = () => {
 	useMount(() => {
 		// 创建画布
 		const graph = new Graph({
-			container: container.current!, // 使用容器的引用
-			background: {
-				color: "#F2F7FA", // 设置背景颜色
+			container: container.current!,
+			grid: true,
+			mousewheel: {
+				enabled: true,
+				zoomAtMousePosition: true,
+				modifiers: "ctrl",
+				minScale: 0.5,
+				maxScale: 3,
+			},
+			connecting: {
+				router: "manhattan",
+				connector: {
+					name: "rounded",
+					args: {
+						radius: 8,
+					},
+				},
+				anchor: "center",
+				connectionPoint: "anchor",
+				allowBlank: false,
+				snap: {
+					radius: 20,
+				},
+				createEdge() {
+					return new Shape.Edge({
+						attrs: {
+							...commonAttrs,
+							line: {
+								...commonAttrs.line,
+								targetMarker: {
+									name: "block", // 箭头类型
+									args: {
+										size: 5, // 箭头的尺寸，这也会影响箭头宽度
+										attrs: {
+											fill: "#d9d9d9", // 箭头的颜色
+										},
+									},
+								},
+							},
+						},
+					});
+				},
+				validateConnection({ targetMagnet }) {
+					return !!targetMagnet;
+				},
+			},
+			highlighting: {
+				magnetAdsorbed: {
+					name: "stroke",
+					args: {
+						attrs: {
+							fill: "#5F95FF",
+							stroke: "#5F95FF",
+						},
+					},
+				},
 			},
 		});
 
@@ -170,11 +196,20 @@ export const Example = () => {
 			}
 		});
 
-		// 为画布中的新增边添加样式
-		graph.on("edge:added", ({ edge, options }) => {
-			edge.attr({
-				line: commonAttrs.line,
-			});
+		// 事件监听：边连接
+		graph.on("edge:connected", ({ isNew, edge, currentCell, currentPort }) => {
+			// 获取当前节点（被连接的）
+			const node = currentCell as Node;
+			node.setPortProp(currentPort as string, "markup", [
+				{
+					tagName: "path",
+					attrs: {
+						fill: "#808080",
+						d: "M -1 1 L 7 1 L 3 5 L -1 1 Z",
+						style: "transform: translateY(-1px)",
+					},
+				},
+			]);
 		});
 	});
 

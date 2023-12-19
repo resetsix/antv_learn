@@ -1,3 +1,4 @@
+// 数据源
 export const DATA = {
     nodes: [
         {
@@ -71,12 +72,10 @@ export const DATA = {
                 name: "rounded",
                 args: {
                     type: "arc",
-                    size: 5,
+                    size: 15,
                     radius: 0,
                 },
             },
-            // router: 'orth',
-            // connector: 'rounded',
         },
     ],
 };
