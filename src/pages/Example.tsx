@@ -5,11 +5,145 @@ import { Stencil } from "@antv/x6-plugin-stencil";
 import { useMount } from "ahooks";
 
 const commonAttrs = {
+	// body: {
+	// 	fill: "#fff",
+	// 	stroke: "#8f8f8f",
+	// 	strokeWidth: 1,
+	// },
 	body: {
-		fill: "#fff",
 		stroke: "#8f8f8f",
 		strokeWidth: 1,
+		fill: "#fff",
+		rx: 6,
+		ry: 6,
 	},
+	img: {
+		"xlink:href":
+			"https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png",
+		width: 16,
+		height: 16,
+		x: 12,
+		y: 12,
+	},
+};
+Graph.registerNode(
+	"custom-node-width-port",
+	{
+		inherit: "rect",
+		width: 100,
+		height: 40,
+		attrs: {
+			body: {
+				stroke: "#8f8f8f",
+				strokeWidth: 1,
+				fill: "#fff",
+				rx: 6,
+				ry: 6,
+			},
+		},
+		ports: {
+			groups: {
+				top: {
+					position: "top",
+					attrs: {
+						circle: {
+							magnet: true,
+							stroke: "#8f8f8f",
+							r: 5,
+						},
+					},
+				},
+				bottom: {
+					position: "bottom",
+					attrs: {
+						circle: {
+							magnet: true,
+							stroke: "#8f8f8f",
+							r: 5,
+						},
+					},
+				},
+			},
+		},
+	},
+	true
+);
+
+const data = {
+	nodes: [
+		{
+			id: "node1",
+			x: 130,
+			y: 30,
+			shape: "custom-node-width-port",
+			width: 80,
+			height: 40,
+			label: "Hello",
+			attrs: {
+				body: {
+					stroke: "#8f8f8f",
+					strokeWidth: 1,
+					fill: "#fff",
+					rx: 6,
+					ry: 6,
+				},
+			},
+			ports: {
+				items: [
+					{
+						id: "port_1",
+						group: "bottom",
+					},
+					{
+						id: "port_2",
+						group: "bottom",
+					},
+				],
+			},
+		},
+		{
+			id: "node2",
+			x: 320,
+			y: 240,
+			shape: "custom-node-width-port",
+			width: 100,
+			height: 40,
+			label: "World",
+			attrs: {
+				body: {
+					stroke: "#8f8f8f",
+					strokeWidth: 1,
+					fill: "#fff",
+					rx: 6,
+					ry: 6,
+				},
+			},
+			ports: {
+				items: [
+					{
+						id: "port_3",
+						group: "top",
+					},
+					{
+						id: "port_4",
+						group: "top",
+					},
+				],
+			},
+		},
+	],
+	edges: [
+		{
+			source: { cell: "node1", port: "port_2" },
+			target: { cell: "node2", port: "port_3" },
+			attrs: {
+				line: {
+					stroke: "#8f8f8f",
+					strokeWidth: 1,
+				},
+			},
+		},
+	],
 };
 
 export const Example = () => {
@@ -33,53 +167,7 @@ export const Example = () => {
 			})
 		);
 
-		// 创建一个源节点
-		const source = graph.addNode({
-			x: 130,
-			y: 30,
-			width: 100,
-			height: 40,
-			label: "Hello",
-			attrs: {
-				body: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-					fill: "#fff",
-					rx: 6,
-					ry: 6,
-				},
-			},
-		});
-
-		// 创建一个目标节点
-		const target = graph.addNode({
-			x: 320,
-			y: 240,
-			width: 100,
-			height: 40,
-			label: "World",
-			attrs: {
-				body: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-					fill: "#fff",
-					rx: 6,
-					ry: 6,
-				},
-			},
-		});
-
-		// 创建一条边连接源节点和目标节点
-		graph.addEdge({
-			source,
-			target,
-			attrs: {
-				line: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-				},
-			},
-		});
+		graph.fromJSON(data);
 
 		// 创建一个 Stencil（类似侧边栏导航UI） 实例
 		const stencil = new Stencil({
@@ -115,11 +203,10 @@ export const Example = () => {
 			x: 40,
 			y: 40,
 			width: 80,
-			height: 40,
+			height: 30,
 			label: "K8S",
 			attrs: commonAttrs,
 		});
-
 		const n2 = graph.createNode({
 			shape: "rect",
 			x: 40,
