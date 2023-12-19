@@ -1,21 +1,15 @@
-import React, { useRef } from "react";
 import { Graph } from "@antv/x6";
 import { Snapline } from "@antv/x6-plugin-snapline";
 import { Stencil } from "@antv/x6-plugin-stencil";
 import { useMount } from "ahooks";
+import { useRef } from "react";
+import { DATA } from "./data";
 
 const commonAttrs = {
-	// body: {
-	// 	fill: "#fff",
-	// 	stroke: "#8f8f8f",
-	// 	strokeWidth: 1,
-	// },
 	body: {
 		stroke: "#8f8f8f",
 		strokeWidth: 1,
 		fill: "#fff",
-		rx: 6,
-		ry: 6,
 	},
 	img: {
 		"xlink:href":
@@ -25,20 +19,30 @@ const commonAttrs = {
 		x: 12,
 		y: 12,
 	},
+	line: {
+		stroke: "#8f8f8f",
+		strokeWidth: 1,
+	},
 };
 Graph.registerNode(
 	"custom-node-width-port",
 	{
-		inherit: "rect",
-		width: 100,
+		width: 120,
 		height: 40,
+
+		markup: [
+			{
+				tagName: "rect",
+				selector: "body",
+			},
+		],
 		attrs: {
 			body: {
-				stroke: "#8f8f8f",
+				stroke: "#bfa",
 				strokeWidth: 1,
 				fill: "#fff",
-				rx: 6,
-				ry: 6,
+				rx: 0,
+				ry: 0,
 			},
 		},
 		ports: {
@@ -69,89 +73,12 @@ Graph.registerNode(
 	true
 );
 
-const data = {
-	nodes: [
-		{
-			id: "node1",
-			x: 130,
-			y: 30,
-			shape: "custom-node-width-port",
-			width: 80,
-			height: 40,
-			label: "Hello",
-			attrs: {
-				body: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-					fill: "#fff",
-					rx: 6,
-					ry: 6,
-				},
-			},
-			ports: {
-				items: [
-					{
-						id: "port_1",
-						group: "bottom",
-					},
-					{
-						id: "port_2",
-						group: "bottom",
-					},
-				],
-			},
-		},
-		{
-			id: "node2",
-			x: 320,
-			y: 240,
-			shape: "custom-node-width-port",
-			width: 100,
-			height: 40,
-			label: "World",
-			attrs: {
-				body: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-					fill: "#fff",
-					rx: 6,
-					ry: 6,
-				},
-			},
-			ports: {
-				items: [
-					{
-						id: "port_3",
-						group: "top",
-					},
-					{
-						id: "port_4",
-						group: "top",
-					},
-				],
-			},
-		},
-	],
-	edges: [
-		{
-			source: { cell: "node1", port: "port_2" },
-			target: { cell: "node2", port: "port_3" },
-			attrs: {
-				line: {
-					stroke: "#8f8f8f",
-					strokeWidth: 1,
-				},
-			},
-		},
-	],
-};
-
 export const Example = () => {
 	const container = useRef<HTMLDivElement | null>(null);
 	const stencilContainer = useRef<HTMLDivElement | null>(null);
 
 	useMount(() => {
-		// 创建一个Graph实例
+		// 创建画布
 		const graph = new Graph({
 			container: container.current!, // 使用容器的引用
 			background: {
@@ -159,7 +86,7 @@ export const Example = () => {
 			},
 		});
 
-		// 使用 Snapline（对齐线） 插件
+		// 配置对齐线
 		graph.use(
 			new Snapline({
 				enabled: true, // 启用插件
@@ -167,9 +94,36 @@ export const Example = () => {
 			})
 		);
 
-		graph.fromJSON(data);
+		// 为画布中的新增节点添加连接桩
+		graph.on("node:added", ({ node, options }) => {
+			//节点添加后根据需求添加连接桩
+			if (options.stencil) {
+				node.addPorts([
+					{
+						id: "stencil_port_1",
+						group: "top",
+					},
+					{
+						id: "stencil_port_2",
+						group: "bottom",
+					},
+				]);
+			}
+		});
 
-		// 创建一个 Stencil（类似侧边栏导航UI） 实例
+		// 为画布中的新增边添加样式
+		graph.on("edge:added", ({ edge, options }) => {
+			edge.attr({
+				line: {
+					stroke: "#8f8f8f",
+					strokeWidth: 1,
+				},
+			});
+		});
+
+		graph.fromJSON(DATA);
+
+		// 配置拖拽栏目
 		const stencil = new Stencil({
 			title: "大数据组件导航",
 			target: graph,
@@ -197,46 +151,25 @@ export const Example = () => {
 		// 将图形内容居中显示
 		graph.centerContent();
 
+		// 包含所有节点标签的数组
+		const stencilLabelData = ["K8S", "SQL", "SPARK", "FLINK"];
+
 		// 创建不同形状的节点
-		const n1 = graph.createNode({
-			shape: "rect",
-			x: 40,
-			y: 40,
-			width: 80,
-			height: 30,
-			label: "K8S",
-			attrs: commonAttrs,
-		});
-		const n2 = graph.createNode({
-			shape: "rect",
-			x: 40,
-			y: 40,
-			width: 80,
-			height: 40,
-			label: "SQL",
-			attrs: commonAttrs,
-		});
-		const n3 = graph.createNode({
-			shape: "rect",
-			x: 40,
-			y: 40,
-			width: 80,
-			height: 40,
-			label: "SPARK",
-			attrs: commonAttrs,
-		});
-		const n4 = graph.createNode({
-			shape: "rect",
-			x: 40,
-			y: 40,
-			width: 80,
-			height: 40,
-			label: "FLINK",
-			attrs: commonAttrs,
-		});
+		const stencilNodesData = stencilLabelData.map((label) =>
+			graph.createNode({
+				shape: "custom-node-width-port",
+				x: 40,
+				y: 40,
+				rx: 1,
+				ry: 1,
+				label: label,
+				// attrs: commonAttrs,
+				attrs: commonAttrs,
+			})
+		);
 
 		// 将节点加载到Stencil中的分组中
-		stencil.load([n1, n2, n3, n4], "group1");
+		stencil.load(stencilNodesData, "group1");
 	});
 
 	return (
